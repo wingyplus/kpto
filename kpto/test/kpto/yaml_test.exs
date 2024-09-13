@@ -103,6 +103,6 @@ defmodule Kpto.YAMLTest do
              ],
              kind: "ResourceList",
              results: nil
-           } = YAML.decode(@yaml, @module) |> dbg()
+           } = YAML.decode(@yaml, @module)
   end
 end

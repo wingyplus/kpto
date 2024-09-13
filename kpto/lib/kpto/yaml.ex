@@ -1,13 +1,12 @@
 defmodule Kpto.YAML do
   @moduledoc """
-  Provides a way to serialize YAML into struct (and do reverse) with automatic 
+  Provides a way to encode/decode YAML into struct (and do reverse) with automatic 
   serialize the name.
   """
 
   def encode(struct) when is_struct(struct) do
     struct
     |> encode_to_map()
-    |> dbg()
     |> Ymlr.document!()
     |> String.trim_leading("---\n")
   end
