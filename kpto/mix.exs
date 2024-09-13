@@ -18,6 +18,9 @@ defmodule Kpto.MixProject do
   end
 
   defp deps do
-    []
+    [
+      {:yaml_elixir, "~> 2.11"},
+      {:ymlr, "~> 5.1"}
+    ]
   end
 end

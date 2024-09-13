@@ -46,22 +46,81 @@ defmodule KptoCodegen do
     [
       @do_not_edit,
       ?\n,
-      """
-      defmodule #{module} do
-        @moduledoc \"\"\"
-      #{doc}
-      \"\"\"
-      """,
+      "defmodule #{module} do",
       ?\n,
-      "@type t() :: %__MODULE__{",
+      moduledoc(doc),
       ?\n,
+      typespec(properties, namespace),
+      ?\n,
+      define_struct(properties),
+      ?\n,
+      reflection(properties, namespace),
+      ?\n,
+      "end",
+      ?\n
+    ]
+    |> IO.iodata_to_binary()
+  end
+
+  defp reflection(properties, namespace) do
+    [
+      "def __reflection__(:mapper) do",
+      ?\n,
+      ?[,
       for {name, spec} <- properties do
-        name = Macro.underscore(name)
-        "#{name}: #{format_type(spec, namespace)},"
+        [
+          Macro.underscore(name),
+          ?:,
+          ~c" ",
+          ?{,
+          ?",
+          name,
+          ?",
+          ?,,
+          reflect_type(spec, namespace),
+          ?},
+          ?,
+        ]
       end,
+      ?],
       ?\n,
-      "}",
-      ?\n,
+      "end"
+    ]
+  end
+
+  defp reflect_type(%{"type" => "object", "properties" => properties}, namespace) do
+    fun = fn {name, spec} ->
+      [
+        Macro.underscore(name),
+        ?:,
+        ~c" ",
+        ?{,
+        ?",
+        name,
+        ?",
+        ?,,
+        reflect_type(spec, namespace),
+        ?},
+        ?,
+      ]
+    end
+
+    [?{, ":map", ?,, Enum.map(properties, fun), ?}]
+  end
+
+  defp reflect_type(%{"type" => "object"}, _), do: ":map"
+  defp reflect_type(%{"type" => "string"}, _), do: ":string"
+
+  defp reflect_type(%{"type" => "array", "items" => spec}, namespace),
+    do: [?{, ":array", ?,, reflect_type(spec, namespace), ?}]
+
+  defp reflect_type(%{"$ref" => <<"#/definitions/", type::binary>>}, namespace),
+    do: to_module_name(type, namespace)
+
+  defp reflect_type(_, _), do: ":any"
+
+  defp define_struct(properties) do
+    [
       "defstruct [",
       for {name, _} <- properties do
         key =
@@ -71,11 +130,29 @@ defmodule KptoCodegen do
 
         [key, ?,]
       end,
-      "]",
-      ?\n,
-      "end"
+      ?]
     ]
-    |> IO.iodata_to_binary()
+  end
+
+  defp typespec(properties, namespace) do
+    [
+      "@type t() :: %__MODULE__{",
+      ?\n,
+      for {name, spec} <- properties do
+        name = Macro.underscore(name)
+        "#{name}: #{format_type(spec, namespace)},"
+      end,
+      ?\n,
+      "}"
+    ]
+  end
+
+  defp moduledoc(doc) do
+    """
+    @moduledoc \"\"\"
+    #{doc}
+    \"\"\"
+    """
   end
 
   defp atom(name), do: [~c":", name]

@@ -25,4 +25,26 @@ defmodule Kpto.Api.KRM.V1.Result do
           tags: map()
         }
   defstruct [:field, :file, :message, :resource_ref, :severity, :tags]
+
+  def __reflection__(:mapper) do
+    [
+      field:
+        {"field",
+         {:map,
+          current_value: {"currentValue", :any},
+          path: {"path", :string},
+          proposed_value: {"proposedValue", :any}}},
+      file: {"file", {:map, index: {"index", :any}, path: {"path", :string}}},
+      message: {"message", :string},
+      resource_ref:
+        {"resourceRef",
+         {:map,
+          api_version: {"apiVersion", :string},
+          kind: {"kind", :string},
+          name: {"name", :string},
+          namespace: {"namespace", :string}}},
+      severity: {"severity", :string},
+      tags: {"tags", :map}
+    ]
+  end
 end
