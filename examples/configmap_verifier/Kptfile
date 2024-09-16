@@ -1,0 +1,7 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: wordpress
+pipeline:
+  validators:
+    - image: configmap-verifier:v0.1.1

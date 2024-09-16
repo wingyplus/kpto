@@ -1,0 +1,6 @@
+{
+  "name": "configmap-verifier",
+  "sdk": "github.com/wingyplus/dagger/sdk/elixir@type-option",
+  "source": ".dagger",
+  "engineVersion": "v0.13.0"
+}

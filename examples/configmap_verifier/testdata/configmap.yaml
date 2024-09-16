@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-name
+data:
+  # NOTE: this is not a sensitive data.
+  username: name
