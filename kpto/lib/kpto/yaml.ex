@@ -48,5 +48,7 @@ defmodule Kpto.YAML do
   end
 
   defp dump(nil, {:array, _}), do: []
+  defp dump(elems, {:array, type}), do: Enum.map(elems, &dump(&1, {:map, type}))
+
   defp dump(value, _), do: value
 end
