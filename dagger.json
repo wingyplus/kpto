@@ -1,0 +1,6 @@
+{
+  "name": "kpto-dev",
+  "sdk": "elixir",
+  "source": ".dagger",
+  "engineVersion": "v0.13.0"
+}
